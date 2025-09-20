@@ -30,6 +30,20 @@ app.use((req, res, next) => {
   next()
 })
 
+// root route
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'FitMate API is running!', 
+    endpoints: [
+      'GET /api/workouts',
+      'POST /api/workouts',
+      'DELETE /api/workouts/:id',
+      'POST /api/user/signup',
+      'POST /api/user/login'
+    ]
+  })
+})
+
 // routes
 app.use('/api/workouts', workoutRoutes)
 app.use('/api/user', userRoutes)
@@ -37,13 +51,21 @@ app.use('/api/user', userRoutes)
 // connect to db
 mongoose.connect(process.env.MONGO_URI)
   .then(() => {
-    // listen for requests
-    app.listen(process.env.PORT, () => {
-      console.log('connected to db & listening on port', process.env.PORT)
-    })
+    console.log('connected to db')
   })
   .catch((error) => {
     console.log(error)
   })
+
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  const port = process.env.PORT || 4000
+  app.listen(port, () => {
+    console.log('Server running on port', port)
+  })
+}
+
+// Export the Express app for Vercel
+module.exports = app
 
   
