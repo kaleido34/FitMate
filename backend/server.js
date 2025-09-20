@@ -11,6 +11,20 @@ const app = express()
 // middleware
 app.use(express.json())
 
+// CORS middleware
+app.use((req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*')
+  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS')
+  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization')
+  
+  // Handle preflight requests
+  if (req.method === 'OPTIONS') {
+    res.sendStatus(200)
+  } else {
+    next()
+  }
+})
+
 app.use((req, res, next) => {
   console.log(req.path, req.method)
   next()
@@ -31,3 +45,5 @@ mongoose.connect(process.env.MONGO_URI)
   .catch((error) => {
     console.log(error)
   })
+
+  
