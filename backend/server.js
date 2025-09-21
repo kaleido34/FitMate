@@ -58,7 +58,7 @@ mongoose.connect(process.env.MONGO_URI)
   })
 
 // For local development
-if (process.env.NODE_ENV !== 'production') {
+if (require.main === module) {
   const port = process.env.PORT || 4000
   app.listen(port, () => {
     console.log('Server running on port', port)
@@ -67,5 +67,3 @@ if (process.env.NODE_ENV !== 'production') {
 
 // Export the Express app for Vercel
 module.exports = app
-
-  
