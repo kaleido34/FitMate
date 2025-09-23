@@ -19,10 +19,10 @@ app.use((req, res, next) => {
   
   // Handle preflight requests
   if (req.method === 'OPTIONS') {
-    res.status(200).end()
-    return
+    res.sendStatus(200)
+  } else {
+    next()
   }
-  next()
 })
 
 app.use((req, res, next) => {
