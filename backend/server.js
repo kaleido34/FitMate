@@ -48,40 +48,14 @@ app.get('/', (req, res) => {
 app.use('/api/workouts', workoutRoutes)
 app.use('/api/user', userRoutes)
 
-// configure mongoose for serverless
-mongoose.set('bufferCommands', false)
-mongoose.set('bufferMaxEntries', 0)
-
-// Connection reuse for serverless
-let cachedConnection = null
-
-async function connectToDatabase() {
-  if (cachedConnection) {
-    return cachedConnection
-  }
-
-  try {
-    const connection = await mongoose.connect(process.env.MONGO_URI, {
-      serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
-      socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
-      bufferCommands: false, // Disable mongoose buffering
-      bufferMaxEntries: 0, // Disable mongoose buffering
-      maxPoolSize: 1, // Maintain up to 1 socket connection
-      serverSelectionTimeoutMS: 5000, // Keep trying to send operations for 5 seconds
-      heartbeatFrequencyMS: 30000, // Send a ping every 30 seconds
-    })
-    
-    cachedConnection = connection
+// connect to db
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => {
     console.log('connected to db')
-    return connection
-  } catch (error) {
-    console.log('Database connection error:', error)
-    throw error
-  }
-}
-
-// Initialize connection
-connectToDatabase()
+  })
+  .catch((error) => {
+    console.log(error)
+  })
 
 // For local development
 if (require.main === module) {
